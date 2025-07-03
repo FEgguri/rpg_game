@@ -9,7 +9,7 @@ class Monster extends Unit {
   Monster(String name, int health, this.maxAttack, int playerDefense)
     : super(name, health, 0, 0); // 기본 공격력과 방어력은 0으로 처리
 
-  int generateAttack(int playerDefense) {
+  int generateAttack() {
     // 몬스터의 공격력 생성
     return Random().nextInt(maxAttack + 1);
   }

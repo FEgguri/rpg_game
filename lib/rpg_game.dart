@@ -64,14 +64,21 @@ class Game {
         return;
       }
 
-      stdout.write('다음 몬스터와 싸우시겠습니까? (y/n): '); // 다음 몬스터와 전투를 계속할지 여부 묻기
-      String? input = stdin.readLineSync();
-      if (input?.toLowerCase() != 'y') {
-        print('게임을 종료합니다.');
-        saveResult('중단');
-        return;
-      } else {
-        print('다음 몬스터와 전투를 시작합니다.');
+      while (true) {
+        stdout.write('다음 몬스터와 싸우시겠습니까? (y/n): ');
+        String? input = stdin.readLineSync();
+
+        if (input?.toLowerCase() == 'n') {
+          print('게임을 종료합니다.');
+          saveResult('중단');
+          return;
+        } else if (input?.toLowerCase() == 'y') {
+          print('다음 몬스터와 전투를 시작합니다.');
+          break; // 다음 전투로 진행
+        } else {
+          print('잘못된 입력입니다. y 또는 n을 입력해주세요.');
+          //  다시 입력받음
+        }
       }
     }
   }
@@ -129,14 +136,17 @@ class Game {
   }
 
   Monster getRandomMonster() {
+    // 몬스터 목록에서 랜덤으로 하나를 선택하는 메서드
     final rand = Random();
     return monsters[rand.nextInt(monsters.length)];
   }
 
   void saveResult(String result) {
+    // 게임 결과를 파일에 저장하는 메서드
     stdout.write('결과를 저장하시겠습니까? (y/n): ');
     String? input = stdin.readLineSync();
     if (input?.toLowerCase() == 'y') {
+      // 사용자가 결과를 저장하기로 선택한 경우
       final file = File('result.txt');
       file.writeAsStringSync(
         '이름: ${character.name}, 남은 체력: ${character.health}, 결과: $result',

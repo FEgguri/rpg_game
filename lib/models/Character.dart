@@ -15,7 +15,7 @@ class Character extends Unit {
   }
 
   void defend(Monster monster) {
-    int incomingAttack = monster.generateAttack(defense);
+    int incomingAttack = monster.generateAttack();
     int recovery = incomingAttack - defense;
 
     if (recovery > 0) {

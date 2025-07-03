@@ -21,18 +21,20 @@ class Character extends Unit {
     : super(name, health, attack, defense); //unit클래스의 속성 초기화
 
   void attackMonster(Monster monster) {
+    //몬스터를 공격
     monster.health -= attack;
     if (monster.health < 0) monster.health = 0;
-    print('$name이(가) ${monster.name}에게 $attack 데미지를 입혔습니다.');
+    print('$name이(가) ${monster.name}에게 $attack의 데미지를 입혔습니다');
   }
 
   void defend(Monster monster) {
-    int damage = monster.attack - defense;
-    if (damage > 0) {
-      health += damage;
-      print('$name이(가) 방어하여 체력을 $damage 회복했습니다.');
+    int recovery = monster.attack - defense;
+    if (recovery > 0) {
+      health += recovery;
+      print('${monster.name}이(가) ${monster.attack}로 공격했지만,');
+      print('$name이(가) 방어하여 체력을 $recovery 회복했습니다!');
     } else {
-      print('$name이(가) 방어했지만 회복할 체력이 없습니다.');
+      print('${monster.name}의 공격을 완벽히 막아냈습니다!');
     }
   }
 
@@ -47,9 +49,14 @@ class Monster extends Unit {
     : super(
         name,
         health,
-        max(maxAttack, playerDefense + Random().nextInt(6)),
+        _generateAttack(maxAttack, playerDefense), // 공격력 생성 함수로
         0,
       );
+
+  static int _generateAttack(int maxAttack, int playerDefense) {
+    int randomValue = Random().nextInt(maxAttack + 1); // 0부터 maxAttack 사이
+    return max(randomValue, playerDefense); // 최소한 방어력보단 세게
+  }
 
   void attackCharacter(Character character) {
     int damage = attack - character.defense;
@@ -76,27 +83,26 @@ class Game {
 
     while (character.health > 0 && monsters.isNotEmpty) {
       Monster monster = getRandomMonster();
-      print('\n=== 전투 시작 ===');
+      print('=== 전투 시작 ===');
 
       while (character.health > 0 && monster.health > 0) {
         character.showStatus();
         monster.showStatus();
 
-        print('행동을 선택하세요: 1) 공격  2) 방어');
+        print('행동을 선택하세요: 1) 몬스터 때리기  2) 방어하기');
         stdout.write('>> ');
         String? choice = stdin.readLineSync();
 
         if (choice == '1') {
           character.attackMonster(monster);
+          if (monster.health > 0) {
+            monster.attackCharacter(character);
+          }
         } else if (choice == '2') {
           character.defend(monster);
         } else {
           print('잘못된 입력입니다.');
           continue;
-        }
-
-        if (monster.health > 0) {
-          monster.attackCharacter(character);
         }
       }
 

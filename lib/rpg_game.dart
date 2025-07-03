@@ -21,15 +21,20 @@ class Game {
     while (character.health > 0 && monsters.isNotEmpty) {
       // 몬스터가 남아있고 캐릭터가 살아있는 동안 반복
       Monster monster = getRandomMonster();
-      print('=== 전투 시작 ===');
+      print('\n=== 몬스터 등장 ===');
+      print('\n=== ${monster.name}이 나타났다!! ===');
+      print(
+        '=== ${monster.name} - 체력 : ${monster.health} , 공격력 : ${monster.attack} ===',
+      );
+      print('\n\n=== 전투 시작 ===');
 
       while (character.health > 0 && monster.health > 0) {
         // 캐릭터와 몬스터가 모두 살아있는 동안 전투 진행
-        character.showStatus();
-        monster.showStatus();
 
-        print('행동을 선택하세요: 1) 몬스터 때리기  2) 방어하기');
-        stdout.write('>> ');
+        // monster.showStatus();
+        print('\n${character.name}의 턴');
+        character.showStatus();
+        stdout.write('행동을 선택하세요: 1) 몬스터 때리기  2) 방어하기 >> ');
         String? choice = stdin.readLineSync();
 
         if (choice == '1') {
@@ -127,7 +132,7 @@ class Game {
         int health = int.parse(parts[1]);
         int maxAttack = int.parse(parts[2]);
 
-        monsters.add(Monster(name, health, maxAttack, character.defense));
+        monsters.add(Monster(name, health, maxAttack));
       }
     } catch (e) {
       print('몬스터 데이터를 불러오는 데 실패했습니다: $e');

@@ -6,8 +6,8 @@ import 'package:rpg_game/models/unit.dart';
 class Monster extends Unit {
   final int maxAttack; // 최대 공격력만 저장
 
-  Monster(String name, int health, this.maxAttack, int playerDefense)
-    : super(name, health, 0, 0); // 기본 공격력과 방어력은 0으로 처리
+  Monster(String name, int health, this.maxAttack)
+    : super(name, health, maxAttack, 0);
 
   int generateAttack() {
     // 몬스터의 공격력 생성
@@ -25,14 +25,16 @@ class Monster extends Unit {
     character.health -= damage;
     if (character.health < 0) character.health = 0;
 
+    print('\n${name}의 턴 ');
+    showStatus();
     print(
-      '$name이(가) ${character.name}에게 $damage 데미지를 입혔습니다. '
+      '\n$name이(가) ${character.name}에게 $damage 데미지를 입혔습니다. '
       '(공격력: $generatedAttack)',
     );
   }
 
   @override
   void showStatus() {
-    print('[몬스터] 이름: $name | 체력: $health | 공격력 범위: 0 ~ $maxAttack');
+    print('\n[몬스터] 이름: $name | 체력: $health | 공격력 범위: 0 ~ $maxAttack');
   }
 }

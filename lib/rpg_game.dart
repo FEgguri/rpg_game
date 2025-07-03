@@ -28,10 +28,12 @@ class Character extends Unit {
   }
 
   void defend(Monster monster) {
-    int recovery = monster.attack - defense;
+    int incomingAttack = monster.generateAttack(defense);
+    int recovery = incomingAttack - defense;
+
     if (recovery > 0) {
       health += recovery;
-      print('${monster.name}이(가) ${monster.attack}로 공격했지만,');
+      print('${monster.name}이(가) $incomingAttack로 공격했지만,');
       print('$name이(가) 방어하여 체력을 $recovery 회복했습니다!');
     } else {
       print('${monster.name}의 공격을 완벽히 막아냈습니다!');
@@ -45,30 +47,35 @@ class Character extends Unit {
 }
 
 class Monster extends Unit {
-  Monster(String name, int health, int maxAttack, int playerDefense)
-    : super(
-        name,
-        health,
-        _generateAttack(maxAttack, playerDefense), // 공격력 생성 함수로
-        0,
-      );
+  final int maxAttack; // 최대 공격력만 저장
 
-  static int _generateAttack(int maxAttack, int playerDefense) {
-    int randomValue = Random().nextInt(maxAttack + 1); // 0부터 maxAttack 사이
-    return max(randomValue, playerDefense); // 최소한 방어력보단 세게
+  Monster(String name, int health, this.maxAttack, int playerDefense)
+    : super(name, health, 0, 0); // 기본 공격력과 방어력은 0으로 처리
+
+  int generateAttack(int playerDefense) {
+    return max(Random().nextInt(maxAttack + 1), playerDefense + 1);
   }
 
   void attackCharacter(Character character) {
-    int damage = attack - character.defense;
+    int generatedAttack = max(
+      Random().nextInt(maxAttack + 1),
+      character.defense,
+    );
+    int damage = generatedAttack - character.defense;
     if (damage < 0) damage = 0;
+
     character.health -= damage;
     if (character.health < 0) character.health = 0;
-    print('$name이(가) ${character.name}에게 $damage 데미지를 입혔습니다.');
+
+    print(
+      '$name이(가) ${character.name}에게 $damage 데미지를 입혔습니다. '
+      '(공격력: $generatedAttack)',
+    );
   }
 
   @override
   void showStatus() {
-    print('[몬스터] 이름: $name | 체력: $health | 공격력: $attack');
+    print('[몬스터] 이름: $name | 체력: $health | 공격력 범위: 0 ~ $maxAttack');
   }
 }
 
@@ -128,6 +135,8 @@ class Game {
         print('게임을 종료합니다.');
         saveResult('중단');
         return;
+      } else {
+        print('다음 몬스터와 전투를 시작합니다.');
       }
     }
   }
